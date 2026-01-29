@@ -1,0 +1,49 @@
+---
+import '../styles/global.css'
+import { Header, Footer } from '../components/ui'
+import { SEO } from 'astro-seo'
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#131313" />
+    <SEO
+      title="Asteroid Belt"
+      description="Helping you adapt to an increasingly automation-driven future"
+      openGraph={{
+        basic: {
+          title: 'Asteroid Belt',
+          type: 'website',
+          image: 'https://asteroidbelt.co/logo.png',
+          url: 'https://asteroidbelt.co',
+        },
+      }}
+      extend={{
+        link: [{ rel: 'icon', href: 'https://asteroidbelt.co/favicon.ico' }],
+        meta: [
+          {
+            name: 'twitter:image',
+            content: 'https://asteroidbelt.co/logo.png',
+          },
+          { name: 'twitter:title', content: 'Asteroid Belt' },
+          {
+            name: 'twitter:description',
+            content: 'Helping you adapt to an increasingly automation-driven future',
+          },
+        ],
+      }}
+    />
+  </head>
+  <body class="font-ibm-plex-sans min-h-screen bg-black text-center text-white lg:text-left">
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer client:only="react" />
+  </body>
+</html>
