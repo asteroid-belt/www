@@ -1,4 +1,4 @@
-# asteroidbelt.co
+# www
 
 > The marketing website for [Asteroid Belt](https://asteroidbelt.co) — helping you adapt to an increasingly automation-driven future. Built with [Astro](https://astro.build), [React](https://react.dev), and [Tailwind CSS](https://tailwindcss.com). Deployed to [Cloudflare Pages](https://pages.cloudflare.com).
 
