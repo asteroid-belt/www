@@ -24,7 +24,7 @@ export const Footer = () => (
         {/* <a href="/privacy" className="transition-colors hover:text-white">
           Privacy Policy
         </a> */}
-        <p>© {new Date().getFullYear()} Asteroid Belt, LLC. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} Asteroid Belt. All rights reserved.</p>
       </div>
     </div>
   </footer>
