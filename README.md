@@ -24,15 +24,15 @@ just dev
 
 ## Usage
 
-| Command        | Description                          |
-| :------------- | :----------------------------------- |
-| `just install` | Install dependencies                 |
-| `just dev`     | Start local dev server               |
-| `just build`   | Build production site to `./dist/`   |
-| `just start`   | Build and preview locally            |
-| `just lint`    | Lint source files                    |
-| `just format`  | Format source files                  |
-| `just deploy`  | Full deploy pipeline to Cloudflare   |
+| Command        | Description                        |
+| :------------- | :--------------------------------- |
+| `just install` | Install dependencies               |
+| `just dev`     | Start local dev server             |
+| `just build`   | Build production site to `./dist/` |
+| `just start`   | Build and preview locally          |
+| `just lint`    | Lint source files                  |
+| `just format`  | Format source files                |
+| `just deploy`  | Full deploy pipeline to Cloudflare |
 
 ## Project Structure
 
