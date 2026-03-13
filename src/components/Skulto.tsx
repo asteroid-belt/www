@@ -15,7 +15,7 @@ export default Skulto
 
 const Hero = () => (
   <StarsContainer>
-    <div className="relative z-20 mx-auto flex h-full flex-col justify-center md:items-center">
+    <div className="relative z-20 mx-auto flex h-full flex-col justify-center pt-20 md:items-center">
       <div className="bg-gray-800/80 py-4 text-center text-xs md:px-10 md:py-8 md:text-lg">
         <pre className="text-amber-300">{LOGO}</pre>
         <p className="mt-4 px-4 text-lg text-white md:text-xl">
