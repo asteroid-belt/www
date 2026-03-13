@@ -64,7 +64,7 @@ const Products = () => (
       <h2 className="mb-12 text-3xl font-bold">What We&apos;re Building</h2>
       <div className="grid gap-8 md:grid-cols-3">
         {products.map((product) => (
-          <div key={product.name} className="space-y-3">
+          <div key={product.name} className="space-y-3 text-left">
             <div className="flex items-center gap-3">
               <h3 className="text-lg font-semibold">{product.name}</h3>
               {'comingSoon' in product && product.comingSoon && (
