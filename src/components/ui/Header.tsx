@@ -15,8 +15,8 @@ export const Header = () => {
             </span>
           </div>
         </a>
-        <div className="flex justify-center gap-4 pt-6 md:pt-0">
-          <a href="https://github.com/asteroid-belt" className={CTA_LINK_CLASSES}>
+        <div className="hidden md:flex justify-center gap-4 pt-6 md:pt-0">
+          <a href="https://github.com/orgs/asteroid-belt/repositories" className={CTA_LINK_CLASSES}>
             GitHub
           </a>
         </div>
