@@ -20,14 +20,6 @@ const Hero = () => (
           Shared context. Shared quality. Shared memory. Open source
           infrastructure for teams shipping AI-native software.
         </p>
-        <a
-          href="https://github.com/asteroid-belt"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-block bg-basically-black px-6 py-3 text-sm transition-colors hover:text-gray-300"
-        >
-          GitHub
-        </a>
       </div>
     </div>
   </StarsContainer>
