@@ -26,7 +26,6 @@
 
 <!-- Favicon (match your Astro site) -->
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
-<link rel="icon" type="image/x-icon" href="/favicon.ico">
 <style>
   :root {
     --bg: #0b0e14;
@@ -164,23 +163,64 @@
   .principle-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.2px; }
   .principle-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.65; }
 
-  /* ===== WORKFLOW PREVIEW ===== */
-  .workflow-section { padding: 100px 32px; }
-  .wf-timeline { position: relative; max-width: 800px; margin: 0 auto; padding-left: 36px; }
-  .wf-timeline::before { content: ''; position: absolute; left: 14px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--gold), var(--green), var(--blue), var(--purple), var(--red), var(--green)); border-radius: 1px; }
-  .wf-step { position: relative; margin-bottom: 24px; }
-  .wf-step::before { content: ''; position: absolute; left: -28px; top: 6px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid; background: var(--bg); }
-  .wf-step.ws-init::before { border-color: var(--gold); }
-  .wf-step.ws-build::before { border-color: var(--green); }
-  .wf-step.ws-validate::before { border-color: var(--purple); }
-  .wf-step.ws-deploy::before { border-color: var(--blue); }
-  .wf-step.ws-test::before { border-color: var(--cyan); }
-  .wf-step.ws-human::before { border-color: var(--red); }
-  .wf-step.ws-live::before { border-color: var(--green); }
-  .wf-step .ws-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 22px; }
-  .wf-step .ws-card h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
-  .wf-step .ws-card .ws-state { font-size: 0.58rem; padding: 2px 8px; border-radius: 10px; font-weight: 700; text-transform: uppercase; }
-  .wf-step .ws-card p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.55; }
+  /* ===== PIPELINE DIAGRAM ===== */
+  .pipeline-diagram { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 36px 40px 28px; margin-bottom: 48px; }
+  .pipe-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .pipe-title { font-size: 1rem; font-weight: 700; color: var(--text); letter-spacing: -0.2px; }
+  .pipe-legend { display: flex; gap: 18px; }
+  .pipe-leg { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; color: var(--text-muted); }
+  .pipe-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Three-column layout: observers | main flow | context */
+  .pipe-body { display: grid; grid-template-columns: 160px 1fr 160px; gap: 20px; }
+
+  /* Left sidebar: always-on agents */
+  .pipe-sidebar { display: flex; flex-direction: column; gap: 12px; padding-top: 8px; }
+  .pipe-sidebar-card { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px; position: relative; }
+  .pipe-sidebar-card .psc-bar { position: absolute; left: 0; top: 12px; bottom: 12px; width: 3px; border-radius: 2px; }
+  .pipe-sidebar-card .psc-title { font-size: 0.72rem; font-weight: 700; margin-bottom: 4px; padding-left: 10px; }
+  .pipe-sidebar-card .psc-desc { font-size: 0.62rem; color: var(--text-dim); line-height: 1.45; padding-left: 10px; }
+  .pipe-sidebar-card .psc-chip { display: inline-block; font-size: 0.56rem; padding: 2px 8px; border-radius: 8px; font-weight: 600; margin-top: 6px; margin-left: 10px; }
+
+  /* Center: vertical flow */
+  .pipe-flow { position: relative; padding-left: 28px; }
+  .pipe-flow::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--red), var(--gold), var(--gold), var(--red), var(--gold), var(--purple), var(--green), var(--green), var(--red), var(--green)); border-radius: 1px; }
+
+  .pipe-step { position: relative; margin-bottom: 6px; }
+  .pipe-step::before { content: ''; position: absolute; left: -24px; top: 14px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid; background: var(--surface); z-index: 1; }
+  .pipe-step.ps-human::before { border-color: var(--red); }
+  .pipe-step.ps-agent::before { border-color: var(--gold); }
+  .pipe-step.ps-auto::before { border-color: var(--green); }
+  .pipe-step.ps-observer::before { border-color: var(--purple); }
+  .pipe-step.ps-done::before { border-color: var(--green); background: rgba(52,211,153,0.3); }
+
+  .pipe-card { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; display: flex; align-items: flex-start; gap: 12px; transition: border-color 0.2s; }
+  .pipe-card:hover { border-color: var(--border-accent); }
+  .pipe-card .pc-state { font-size: 0.56rem; padding: 2px 8px; border-radius: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+  .pipe-card .pc-content { flex: 1; min-width: 0; }
+  .pipe-card .pc-title { font-size: 0.85rem; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .pipe-card .pc-title .pc-agent { font-size: 0.58rem; padding: 2px 8px; border-radius: 8px; font-weight: 600; }
+  .pipe-card .pc-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.5; margin-top: 2px; }
+
+  .pipe-gate { margin: 2px 0 2px -28px; padding-left: 28px; }
+  .pipe-gate-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 0.58rem; font-weight: 700; letter-spacing: 1.5px; color: var(--red); padding: 4px 12px; background: rgba(224,82,82,0.08); border: 1px solid rgba(224,82,82,0.2); border-radius: 6px; }
+  .pipe-gate-tag .pg-line { width: 20px; height: 1px; background: var(--red); }
+
+  .pipe-branch { margin: 2px 0 4px 0; font-size: 0.68rem; color: var(--text-dim); padding: 5px 12px; border-left: 2px dashed; border-radius: 0 6px 6px 0; background: rgba(255,255,255,0.015); }
+  .pipe-branch.pb-retry { border-color: var(--gold); }
+  .pipe-branch.pb-fail { border-color: var(--red); }
+  .pipe-branch.pb-confidence { border-color: var(--purple); }
+
+  /* Right sidebar: context annotations */
+  .pipe-context { display: flex; flex-direction: column; gap: 12px; padding-top: 8px; }
+  .pipe-ctx-note { font-size: 0.62rem; color: var(--text-dim); line-height: 1.45; padding: 10px 12px; background: rgba(255,255,255,0.02); border: 1px dashed var(--border); border-radius: 8px; }
+  .pipe-ctx-note strong { color: var(--text-muted); font-weight: 600; }
+
+  @media (max-width: 900px) {
+    .pipe-body { grid-template-columns: 1fr; }
+    .pipe-sidebar, .pipe-context { flex-direction: row; flex-wrap: wrap; }
+    .pipe-sidebar-card { flex: 1; min-width: 140px; }
+  }
 
   /* ===== DIFFERENTIATORS ===== */
   .diff-section { padding: 100px 32px; }
@@ -456,7 +496,7 @@
         <p>A supervisor agent (Captain) manages agent lifecycle: spin-up, teardown, reassignment, and escalation. It delegates based on the state machine's answer to "what should happen next?" A separate state agent owns the work lifecycle, tracking which state the idea is in and what transition is valid next. Clean separation: one owns agents, the other owns work.</p>
         <div class="layer-agents">
           <span class="agent-chip">Captain (Agent Lifecycle)</span>
-          <span class="agent-chip">Planner / State Agent (Work Lifecycle)</span>
+          <span class="agent-chip">Superplan / State Agent (Work Lifecycle)</span>
         </div>
       </div>
     </div>
@@ -491,7 +531,7 @@
         <h4>Execution Layer <span class="layer-tag" style="background:rgba(52,211,153,0.15); color:var(--green);">Task-Scoped</span></h4>
         <p>Task-scoped agents that spin up per idea: a phased builder that executes the plan step-by-step with quality gates at each phase, a holistic correctness validator that returns confidence scores (not just pass/fail) against acceptance criteria and business context, a deployer that owns both deployment and rollback capability targeting historian snapshots, and a smoke tester that iterates until confidence reaches a configurable threshold.</p>
         <div class="layer-agents">
-          <span class="agent-chip">Builder (Phased)</span>
+          <span class="agent-chip">Superbuild (Phased)</span>
           <span class="agent-chip">Verifier (Quality Gates)</span>
           <span class="agent-chip">Correctness (Confidence Scoring)</span>
           <span class="agent-chip">Deployer (+ Rollback)</span>
@@ -510,50 +550,156 @@
     <p>A complete feature lifecycle with quality gates, feedback loops, confidence scoring, rollback capability, and explicit human decision points.</p>
   </div>
 
-  <div class="wf-timeline">
-    <div class="wf-step ws-init">
-      <div class="ws-card">
-        <h4>Initialization <span class="ws-state" style="background:rgba(240,180,41,0.15); color:var(--gold);">initialized</span></h4>
-        <p>Captain receives the approved plan. Spins up all agents. Historian hydrates the context graph with story details, acceptance criteria, tech context, and business docs. State machine sets to initialized.</p>
+  <!-- PIPELINE DIAGRAM -->
+  <div class="pipeline-diagram">
+    <div class="pipe-header">
+      <div class="pipe-title">Lifecycle of a task in Orcs</div>
+      <div class="pipe-legend">
+        <span class="pipe-leg"><span class="pipe-dot" style="background:var(--red);"></span>Human</span>
+        <span class="pipe-leg"><span class="pipe-dot" style="background:var(--gold);"></span>Agent</span>
+        <span class="pipe-leg"><span class="pipe-dot" style="background:var(--green);"></span>Automated</span>
+        <span class="pipe-leg"><span class="pipe-dot" style="background:var(--purple);"></span>Observer</span>
       </div>
     </div>
-    <div class="wf-step ws-build">
-      <div class="ws-card">
-        <h4>Build Phases <span class="ws-state" style="background:rgba(52,211,153,0.15); color:var(--green);">building</span></h4>
-        <p>Builder executes the plan phase-by-phase. Each phase has its own definition of done. Quality monitor queues findings in real-time; builder pulls them at checkpoints. Verifier evaluates gates per phase: pass advances, fail retries with learnings from previous attempts. Max retries exceeded transitions to blocked, escalating to human.</p>
+
+    <div class="pipe-body">
+      <!-- LEFT SIDEBAR: Always-on agents -->
+      <div class="pipe-sidebar">
+        <div class="pipe-sidebar-card">
+          <div class="psc-bar" style="background:var(--purple);"></div>
+          <div class="psc-title" style="color:var(--purple);">Quality Monitor</div>
+          <div class="psc-desc">Watches all code changes in real-time. Queues findings at checkpoints. Never modifies code directly.</div>
+          <div class="psc-chip" style="background:rgba(167,139,250,0.15);color:var(--purple);">supercharge</div>
+        </div>
+        <div class="pipe-sidebar-card">
+          <div class="psc-bar" style="background:var(--blue);"></div>
+          <div class="psc-title" style="color:var(--blue);">Historian</div>
+          <div class="psc-desc">Observes every state transition. Append-only audit trail. Creates rollback snapshots.</div>
+          <div class="psc-chip" style="background:rgba(96,165,250,0.15);color:var(--blue);">historian</div>
+        </div>
+        <div class="pipe-sidebar-card">
+          <div class="psc-bar" style="background:var(--cyan);"></div>
+          <div class="psc-title" style="color:var(--cyan);">Context Service</div>
+          <div class="psc-desc">Read-only knowledge graph. Business docs, acceptance criteria, tech context available to all agents.</div>
+          <div class="psc-chip" style="background:rgba(34,211,238,0.15);color:var(--cyan);">context agent</div>
+        </div>
       </div>
-    </div>
-    <div class="wf-step ws-validate">
-      <div class="ws-card">
-        <h4>Correctness Validation <span class="ws-state" style="background:rgba(167,139,250,0.15); color:var(--purple);">validating</span></h4>
-        <p>Holistic evaluation of the entire story, not just individual phases. Returns a confidence score per criterion plus an overall score. High confidence auto-passes. Partial confidence (configurable threshold) surfaces to the human to decide. Low confidence auto-fails back to builder with specific findings.</p>
+
+      <!-- CENTER: Vertical flow -->
+      <div class="pipe-flow">
+        <div class="pipe-step ps-human">
+          <div class="pipe-card">
+            <div class="pc-state" style="background:rgba(224,82,82,0.12);color:var(--red);">new</div>
+            <div class="pc-content">
+              <div class="pc-title">Story created</div>
+              <div class="pc-desc">Human scopes the work, defines acceptance criteria, links business context</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pipe-step ps-agent">
+          <div class="pipe-card">
+            <div class="pc-state" style="background:rgba(240,180,41,0.12);color:var(--gold);">planning</div>
+            <div class="pc-content">
+              <div class="pc-title">Plan generated <span class="pc-agent" style="background:rgba(240,180,41,0.15);color:var(--gold);">superplan</span></div>
+              <div class="pc-desc">Agent generates phased implementation plan with per-phase definitions of done</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pipe-gate"><div class="pipe-gate-tag"><span class="pg-line"></span>HUMAN GATE<span class="pg-line"></span></div></div>
+
+        <div class="pipe-step ps-human">
+          <div class="pipe-card">
+            <div class="pc-state" style="background:rgba(224,82,82,0.12);color:var(--red);">approved</div>
+            <div class="pc-content">
+              <div class="pc-title">Plan approved</div>
+              <div class="pc-desc">Human reviews plan, edits if needed, approves. Captain spins up all agents.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pipe-step ps-agent">
+          <div class="pipe-card">
+            <div class="pc-state" style="background:rgba(52,211,153,0.12);color:var(--green);">building</div>
+            <div class="pc-content">
+              <div class="pc-title">Build phases <span class="pc-agent" style="background:rgba(240,180,41,0.15);color:var(--gold);">superbuild</span> <span class="pc-agent" style="background:rgba(167,139,250,0.15);color:var(--purple);">verifier</span></div>
+              <div class="pc-desc">Builder executes plan phase-by-phase. Quality monitor queues findings. Verifier evaluates gates per phase.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pipe-branch pb-retry">&#x21BB; Phase gate fails &rarr; retry same phase with learnings from previous attempt</div>
+        <div class="pipe-branch pb-fail">&#x2716; Max retries exhausted &rarr; <strong style="color:var(--red);">blocked</strong> &rarr; escalate to human with full context</div>
+
+        <div class="pipe-step ps-agent">
+          <div class="pipe-card">
+            <div class="pc-state" style="background:rgba(167,139,250,0.12);color:var(--purple);">validating</div>
+            <div class="pc-content">
+              <div class="pc-title">Correctness validation <span class="pc-agent" style="background:rgba(167,139,250,0.15);color:var(--purple);">correctness</span></div>
+              <div class="pc-desc">Holistic evaluation against acceptance criteria. Returns confidence score per criterion, not just pass/fail.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pipe-branch pb-confidence">&#x2265; 90% confidence &rarr; auto-pass &nbsp;&nbsp;|&nbsp;&nbsp; 70-90% &rarr; human decides &nbsp;&nbsp;|&nbsp;&nbsp; &lt; 70% &rarr; back to building</div>
+
+        <div class="pipe-step ps-auto">
+          <div class="pipe-card">
+            <div class="pc-state" style="background:rgba(96,165,250,0.12);color:var(--blue);">deploying</div>
+            <div class="pc-content">
+              <div class="pc-title">Deploy to pre-prod <span class="pc-agent" style="background:rgba(52,211,153,0.15);color:var(--green);">deployer</span></div>
+              <div class="pc-desc">Pushes via existing CI/CD pipelines. Deployer owns both deployment and rollback capability.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pipe-step ps-auto">
+          <div class="pipe-card">
+            <div class="pc-state" style="background:rgba(34,211,238,0.12);color:var(--cyan);">smoke_testing</div>
+            <div class="pc-content">
+              <div class="pc-title">Smoke tests <span class="pc-agent" style="background:rgba(52,211,153,0.15);color:var(--green);">smoke tester</span></div>
+              <div class="pc-desc">Runs existing + generated tests. Iterates until confidence exceeds 95%. Critical failures trigger rollback.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pipe-branch pb-fail">&#x21BB; Critical failure or post-deploy defect &rarr; <strong style="color:#f87171;">rolling_back</strong> to historian snapshot</div>
+
+        <div class="pipe-gate"><div class="pipe-gate-tag"><span class="pg-line"></span>HUMAN GATE<span class="pg-line"></span></div></div>
+
+        <div class="pipe-step ps-human">
+          <div class="pipe-card">
+            <div class="pc-state" style="background:rgba(224,82,82,0.12);color:var(--red);">go-live</div>
+            <div class="pc-content">
+              <div class="pc-title">Go-live decision</div>
+              <div class="pc-desc">Human reviews full build report: phases, confidence scores, smoke results, historian trail. Approves, rejects, or abandons.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pipe-step ps-done">
+          <div class="pipe-card" style="border-color:rgba(52,211,153,0.35);">
+            <div class="pc-state" style="background:rgba(52,211,153,0.2);color:var(--green);">prod_verified</div>
+            <div class="pc-content">
+              <div class="pc-title" style="color:var(--green);">Production verified</div>
+              <div class="pc-desc">Live and confirmed working. Deployer on rollback standby. Historian archives full lifecycle.</div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="wf-step ws-deploy">
-      <div class="ws-card">
-        <h4>Deployment <span class="ws-state" style="background:rgba(96,165,250,0.15); color:var(--blue);">deploying</span></h4>
-        <p>Deployer pushes to pre-prod via existing CI/CD pipelines. No custom deployment logic; it leverages existing infrastructure. Deployer also owns rollback capability, targeting historian snapshots if downstream testing fails.</p>
-      </div>
-    </div>
-    <div class="wf-step ws-test">
-      <div class="ws-card">
-        <h4>Smoke Testing <span class="ws-state" style="background:rgba(34,211,238,0.15); color:var(--cyan);">smoke_testing</span></h4>
-        <p>Runs all existing and new tests. Identifies confidence gaps: untested paths, edge cases, integration points. Generates additional tests to close gaps. Iterates until confidence exceeds threshold (default 95%). Critical failures trigger automatic rollback.</p>
-      </div>
-    </div>
-    <div class="wf-step ws-human">
-      <div class="ws-card">
-        <h4>Go-Live Decision <span class="ws-state" style="background:rgba(224,82,82,0.15); color:var(--red);">human gate</span></h4>
-        <p>Human decision point: the final gate before production. Captain presents the full build report: phases completed, correctness confidence scores, smoke test results, and the historian's complete decision trail. Human approves, rejects with feedback, or abandons.</p>
-      </div>
-    </div>
-    <div class="wf-step ws-live">
-      <div class="ws-card">
-        <h4>Production Verified <span class="ws-state" style="background:rgba(52,211,153,0.2); color:var(--green);">prod_verified</span></h4>
-        <p>Feature is live and confirmed working. Post-deploy smoke tests verify production behavior. Deployer remains on rollback standby for a configurable monitoring window. Historian archives the idea's complete lifecycle for future institutional memory.</p>
+
+      <!-- RIGHT SIDEBAR: Context annotations -->
+      <div class="pipe-context">
+        <div class="pipe-ctx-note"><strong>Captain</strong> manages agent lifecycle throughout: spin-up, teardown, reassignment, escalation</div>
+        <div class="pipe-ctx-note"><strong>State agent</strong> tracks which state the task is in and enforces valid transitions</div>
+        <div class="pipe-ctx-note"><strong>Message bus</strong> carries all inter-agent communication through typed envelopes</div>
+        <div class="pipe-ctx-note"><strong>14 states</strong> total, including blocked (awaiting human), abandoned (killed), and rolling_back (reverting)</div>
+        <div class="pipe-ctx-note"><strong>Every action</strong> is logged. The full lifecycle can be replayed and audited.</div>
       </div>
     </div>
   </div>
+
 </section>
 
 <!-- STATE MACHINE -->
