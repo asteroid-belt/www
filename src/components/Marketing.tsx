@@ -3,7 +3,7 @@ import { StarsContainer } from './ui/StarsContainer'
 const Marketing = () => (
   <>
     <Hero />
-    <WhatWeAreBuilding />
+    <Products />
   </>
 )
 
@@ -11,98 +11,87 @@ export default Marketing
 
 const Hero = () => (
   <StarsContainer>
-    <div className="relative z-20 flex h-full justify-center px-6 pt-[50%] md:items-center md:pt-0">
+    <div className="relative z-20 flex h-full items-center justify-center px-6 py-20">
       <div className="max-w-4xl space-y-6">
         <h1 className="text-4xl leading-tight font-light md:text-5xl">
-          Open Source tools for AI belts
+          Tools for building with AI agents
         </h1>
+        <p className="text-lg text-gray-300">
+          Shared context. Shared quality. Shared memory. Open source
+          infrastructure for teams shipping AI-native software.
+        </p>
+        <a
+          href="https://github.com/asteroid-belt"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block bg-basically-black px-6 py-3 text-sm transition-colors hover:text-gray-300"
+        >
+          GitHub
+        </a>
       </div>
     </div>
   </StarsContainer>
 )
 
-const WhatWeAreBuilding = () => {
-  return (
-    <section className="bg-space-purple px-6 py-16 text-white">
-      <div className="mx-auto max-w-6xl">
-        <h2 className="mb-12 text-3xl font-bold">What We&apos;re Building</h2>
-        <div className="grid gap-8 text-center md:grid-cols-2 md:text-left">
-          <ProductInfo
-            title="Skulto"
-            description="An offline-first tool for discovering, syncing and managing AI agent skills so teams can use AI with consistency and predictability."
-            installations={[
-              {
-                type: 'homebrew',
-                value: 'asteroid-belt/tap/skulto',
-              },
-              {
-                type: 'github',
-                value: 'https://github.com/asteroid-belt/skulto',
-              },
-            ]}
-            learnMoreLink="/skulto"
-          />
-        </div>
+const products = [
+  {
+    name: 'Skulto',
+    tagline: 'Security scanner and package manager for AI agent skills.',
+    description: 'Detect prompt injection, sync skill repositories, and install across 33 platforms.',
+    install: 'brew install asteroid-belt/tap/skulto',
+    link: '/skulto',
+    linkLabel: 'Learn more',
+  },
+  {
+    name: 'Orcs',
+    tagline: 'Multi-agent orchestration for shipping production software.',
+    description:
+      'Event-driven state machine, human-in-the-loop quality gates, institutional memory.',
+    link: '/whitepaper',
+    linkLabel: 'Read the whitepaper',
+  },
+  {
+    name: 'Teach',
+    tagline: 'Interactive learning for technical topics.',
+    description: 'A site and mobile app that teaches through exercises, not lectures.',
+    comingSoon: true,
+  },
+] as const
+
+const Products = () => (
+  <section className="bg-space-purple px-6 py-16 text-white">
+    <div className="mx-auto max-w-6xl">
+      <h2 className="mb-12 text-3xl font-bold">What We&apos;re Building</h2>
+      <div className="grid gap-8 md:grid-cols-3">
+        {products.map((product) => (
+          <div key={product.name} className="space-y-3">
+            <div className="flex items-center gap-3">
+              <h3 className="text-lg font-semibold">{product.name}</h3>
+              {'comingSoon' in product && product.comingSoon && (
+                <span className="rounded-full bg-gray-700 px-3 py-1 text-xs text-gray-300">
+                  Coming soon
+                </span>
+              )}
+            </div>
+            <p className="text-sm text-gray-300">
+              {product.tagline} {product.description}
+            </p>
+            {'install' in product && product.install && (
+              <code className="block text-sm text-gray-400">
+                {product.install}
+              </code>
+            )}
+            {'link' in product && product.link && (
+              <a
+                href={product.link}
+                className="inline-block text-sm text-gray-200 underline transition-colors hover:text-white"
+              >
+                {'linkLabel' in product ? product.linkLabel : 'Learn more'}
+              </a>
+            )}
+          </div>
+        ))}
       </div>
-    </section>
-  )
-}
-
-const getProductInstallation = (type: 'github' | 'homebrew', value: string) => {
-  switch (type) {
-    case 'github':
-      return (
-        <div>
-          <a
-            key={value}
-            href={value}
-            className="text-medium mt-2 block text-gray-200 underline transition-colors hover:text-white"
-          >
-            Build from source
-          </a>
-        </div>
-      )
-    case 'homebrew':
-      return <code>brew install {value}</code>
-    default:
-      throw new Error(`Unknown installation type: ${type}`)
-  }
-}
-
-const ProductInfo = ({
-  title,
-  description,
-  installations,
-  learnMoreLink,
-}: {
-  title: string
-  description: string
-  installations: { type: 'github' | 'homebrew'; value: string }[]
-  learnMoreLink: string
-}) => (
-  <div>
-    <h3 className="mx-auto mb-4 max-w-[200px] border-b-3 border-gray-600 pb-3 text-lg font-semibold md:mx-0 md:max-w-full">
-      {title}
-    </h3>
-    <p className="text-sm text-gray-300">
-      {description}
-      <span>
-        {' '}
-        <a
-          href={learnMoreLink}
-          className="text-gray-200 underline transition-colors hover:text-white"
-        >
-          Learn More
-        </a>
-      </span>
-      .
-    </p>
-    <nav>
-      {installations.map(({ value, type }) => (
-        <li key={value} className="list-none first:pt-2">
-          {getProductInstallation(type, value)}
-        </li>
-      ))}
-    </nav>
-  </div>
+    </div>
+  </section>
 )

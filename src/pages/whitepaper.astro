@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scaling AI-Native Development: Beyond Individual Tooling | Asteroid Belt</title>
+<meta name="description" content="Current AI development tools are built for individual developers. Enterprise engineering orgs need shared context, shared quality, and shared memory. Here's a multi-agent architecture that delivers all three.">
+<link rel="canonical" href="https://asteroidbelt.co/whitepaper">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Scaling AI-Native Development Beyond Individual Tooling">
+<meta property="og:description" content="A multi-agent orchestration architecture for enterprise engineering orgs: shared context, shared quality, shared memory.">
+<meta property="og:url" content="https://asteroidbelt.co/whitepaper">
+<meta property="og:site_name" content="Asteroid Belt">
+
+<!-- Twitter/X -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Scaling AI-Native Development Beyond Individual Tooling">
+<meta name="twitter:description" content="A multi-agent orchestration architecture for enterprise engineering orgs: shared context, shared quality, shared memory.">
+
+<!-- Font -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Favicon (match your Astro site) -->
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<style>
+  :root {
+    --bg: #0b0e14;
+    --surface: #141820;
+    --surface2: #1a1f2b;
+    --border: #242b3a;
+    --border-accent: #2d3548;
+    --text: #e2e8f0;
+    --text-muted: #8b95a8;
+    --text-dim: #5a6478;
+    --gold: #f0b429;
+    --gold-dim: #b8860b;
+    --red: #e05252;
+    --green: #34d399;
+    --blue: #60a5fa;
+    --purple: #a78bfa;
+    --teal: #2dd4bf;
+    --cyan: #22d3ee;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', 'SF Pro Display', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+
+  /* ===== NAV ===== */
+  nav { position: fixed; top: 0; width: 100%; z-index: 100; background: rgba(11,14,20,0.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+  nav .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 14px 32px; }
+  nav .logo { font-weight: 700; font-size: 0.95rem; color: var(--gold); letter-spacing: -0.3px; }
+  nav .nav-links { display: flex; gap: 28px; }
+  nav .nav-links a { color: var(--text-muted); font-size: 0.78rem; text-decoration: none; font-weight: 500; letter-spacing: 0.3px; transition: color 0.2s; }
+  nav .nav-links a:hover { color: var(--text); }
+
+  /* ===== SECTIONS ===== */
+  section { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+
+  /* ===== HERO ===== */
+  .hero { padding-top: 160px; padding-bottom: 100px; text-align: center; position: relative; }
+  .hero::after { content: ''; position: absolute; top: 80px; left: 50%; transform: translateX(-50%); width: 600px; height: 600px; background: radial-gradient(circle, rgba(240,180,41,0.06) 0%, transparent 70%); pointer-events: none; }
+  .hero .eyebrow { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; color: var(--gold); margin-bottom: 20px; font-weight: 600; }
+  .hero h1 { font-size: 3.2rem; font-weight: 800; line-height: 1.15; letter-spacing: -1.5px; max-width: 800px; margin: 0 auto 24px; background: linear-gradient(135deg, #ffffff 0%, #c8d0dc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .subtitle { font-size: 1.15rem; color: var(--text-muted); max-width: 640px; margin: 0 auto 40px; line-height: 1.7; }
+  .hero .hero-meta { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; }
+  .hero .meta-item { font-size: 0.75rem; color: var(--text-dim); display: flex; align-items: center; gap: 6px; }
+  .hero .meta-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  /* ===== SECTION HEADERS ===== */
+  .s-header { margin-bottom: 48px; }
+  .s-header .s-eyebrow { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 3px; color: var(--gold); margin-bottom: 12px; font-weight: 600; }
+  .s-header h2 { font-size: 2rem; font-weight: 700; letter-spacing: -0.8px; line-height: 1.2; margin-bottom: 12px; }
+  .s-header p { font-size: 1rem; color: var(--text-muted); max-width: 600px; line-height: 1.7; }
+
+  /* ===== PROBLEM SECTION ===== */
+  .problem-section { padding: 100px 32px; }
+  .problem-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 20px; }
+  .problem-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px; position: relative; overflow: hidden; transition: border-color 0.3s; }
+  .problem-card:hover { border-color: var(--border-accent); }
+  .problem-card .p-icon { font-size: 2rem; margin-bottom: 16px; }
+  .problem-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.3px; }
+  .problem-card p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.65; }
+  .problem-card .p-examples { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .problem-card .p-example { font-size: 0.78rem; color: var(--text-dim); padding: 4px 0; display: flex; align-items: flex-start; gap: 8px; }
+  .problem-card .p-example::before { content: "→"; color: var(--gold-dim); flex-shrink: 0; margin-top: 1px; }
+
+  /* ===== COST SECTION ===== */
+  .cost-section { padding: 80px 32px; }
+  .cost-bar { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 40px 48px; display: flex; align-items: center; gap: 48px; flex-wrap: wrap; justify-content: center; }
+  .cost-stat { text-align: center; }
+  .cost-stat .num { font-size: 2.4rem; font-weight: 800; letter-spacing: -1px; }
+  .cost-stat .num.gold { color: var(--gold); }
+  .cost-stat .num.red { color: var(--red); }
+  .cost-stat .num.blue { color: var(--blue); }
+  .cost-stat .label { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; max-width: 160px; line-height: 1.4; }
+  .cost-divider { width: 1px; height: 60px; background: var(--border); }
+
+  /* ===== WHY NOT SECTION ===== */
+  .whynot-section { padding: 100px 32px; }
+  .whynot-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+  .whynot-card { border-radius: 16px; padding: 32px; position: relative; }
+  .whynot-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.3px; }
+  .whynot-card .wn-list { list-style: none; padding: 0; }
+  .whynot-card .wn-list li { font-size: 0.82rem; padding: 5px 0; display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
+  .whynot-card.wn-no { background: var(--surface); border: 1px solid var(--border); }
+  .whynot-card.wn-no h3 { color: var(--text-muted); }
+  .whynot-card.wn-no .marker { color: var(--red); }
+  .whynot-card.wn-yes { background: linear-gradient(135deg, rgba(52,211,153,0.08), rgba(52,211,153,0.02)); border: 1px solid rgba(52,211,153,0.25); }
+  .whynot-card.wn-yes h3 { color: var(--green); }
+  .whynot-card.wn-yes .marker { color: var(--green); }
+  .whynot-card .verdict-tag { display: inline-block; font-size: 0.65rem; padding: 3px 12px; border-radius: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+  .verdict-reject { background: rgba(224,82,82,0.15); color: var(--red); }
+  .verdict-partial { background: rgba(240,180,41,0.15); color: var(--gold); }
+  .verdict-accept { background: rgba(52,211,153,0.15); color: var(--green); }
+
+  /* ===== ARCHITECTURE SECTION ===== */
+  .arch-section { padding: 100px 32px; }
+
+  .arch-layers { display: flex; flex-direction: column; gap: 16px; max-width: 900px; margin: 0 auto; }
+  .arch-layer { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px 32px; display: flex; align-items: flex-start; gap: 24px; transition: border-color 0.3s; }
+  .arch-layer:hover { border-color: var(--border-accent); }
+  .arch-layer .layer-marker { min-width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+  .arch-layer .layer-content { flex: 1; }
+  .arch-layer .layer-content h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.2px; }
+  .arch-layer .layer-content .layer-tag { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; padding: 2px 8px; border-radius: 4px; font-weight: 600; margin-left: 8px; }
+  .arch-layer .layer-content p { font-size: 0.84rem; color: var(--text-muted); line-height: 1.6; }
+  .arch-layer .layer-agents { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .arch-layer .agent-chip { font-size: 0.68rem; padding: 4px 12px; border-radius: 8px; font-weight: 600; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: var(--text-muted); }
+
+  .lm-orch { background: rgba(224,82,82,0.12); }
+  .lm-infra { background: rgba(96,165,250,0.12); }
+  .lm-qual { background: rgba(167,139,250,0.12); }
+  .lm-exec { background: rgba(52,211,153,0.12); }
+
+  /* ===== STATE MACHINE SECTION ===== */
+  .sm-section { padding: 100px 32px; }
+  .sm-flow { max-width: 900px; margin: 0 auto; }
+  .sm-row-wrap { display: flex; flex-direction: column; gap: 8px; }
+  .sm-main-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .sm-node { padding: 10px 18px; border-radius: 10px; font-size: 0.82rem; font-weight: 700; text-align: center; white-space: nowrap; }
+  .sm-connector { color: var(--text-dim); font-size: 0.85rem; }
+  .sm-branch-row { margin-left: 32px; font-size: 0.78rem; padding: 6px 14px; border-left: 3px solid; border-radius: 0 8px 8px 0; margin-top: 2px; }
+  .smb-pass { border-color: var(--green); background: rgba(52,211,153,0.06); color: var(--green); }
+  .smb-fail { border-color: var(--red); background: rgba(224,82,82,0.06); color: var(--red); }
+  .smb-human { border-color: var(--gold); background: rgba(240,180,41,0.06); color: var(--gold); }
+  .smb-rollback { border-color: var(--red); background: rgba(224,82,82,0.08); color: #f87171; }
+  .smb-confidence { border-color: var(--purple); background: rgba(167,139,250,0.06); color: var(--purple); }
+
+  .sm-state-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 24px; justify-content: center; }
+  .sm-state-chip { font-size: 0.68rem; padding: 5px 14px; border-radius: 20px; font-weight: 600; border: 1px solid; }
+
+  /* ===== DESIGN PRINCIPLES ===== */
+  .principles-section { padding: 100px 32px; }
+  .principles-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .principle-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px 32px; transition: border-color 0.3s; }
+  .principle-card:hover { border-color: var(--border-accent); }
+  .principle-card .pr-num { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--gold-dim); margin-bottom: 8px; font-weight: 700; }
+  .principle-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.2px; }
+  .principle-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.65; }
+
+  /* ===== WORKFLOW PREVIEW ===== */
+  .workflow-section { padding: 100px 32px; }
+  .wf-timeline { position: relative; max-width: 800px; margin: 0 auto; padding-left: 36px; }
+  .wf-timeline::before { content: ''; position: absolute; left: 14px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--gold), var(--green), var(--blue), var(--purple), var(--red), var(--green)); border-radius: 1px; }
+  .wf-step { position: relative; margin-bottom: 24px; }
+  .wf-step::before { content: ''; position: absolute; left: -28px; top: 6px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid; background: var(--bg); }
+  .wf-step.ws-init::before { border-color: var(--gold); }
+  .wf-step.ws-build::before { border-color: var(--green); }
+  .wf-step.ws-validate::before { border-color: var(--purple); }
+  .wf-step.ws-deploy::before { border-color: var(--blue); }
+  .wf-step.ws-test::before { border-color: var(--cyan); }
+  .wf-step.ws-human::before { border-color: var(--red); }
+  .wf-step.ws-live::before { border-color: var(--green); }
+  .wf-step .ws-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 22px; }
+  .wf-step .ws-card h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+  .wf-step .ws-card .ws-state { font-size: 0.58rem; padding: 2px 8px; border-radius: 10px; font-weight: 700; text-transform: uppercase; }
+  .wf-step .ws-card p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.55; }
+
+  /* ===== DIFFERENTIATORS ===== */
+  .diff-section { padding: 100px 32px; }
+  .diff-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .diff-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; text-align: center; transition: border-color 0.3s; }
+  .diff-card:hover { border-color: var(--border-accent); }
+  .diff-card .d-icon { font-size: 2rem; margin-bottom: 12px; }
+  .diff-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; }
+  .diff-card p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.55; }
+
+  /* ===== ABOUT / CTA ===== */
+  .about-section { padding: 100px 32px 120px; }
+  .about-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 48px; max-width: 700px; margin: 0 auto; text-align: center; }
+  .about-card h2 { font-size: 1.6rem; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.5px; }
+  .about-card p { font-size: 0.95rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 12px; }
+  .about-card .contact-links { display: flex; gap: 16px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
+  .about-card .contact-link { font-size: 0.82rem; padding: 10px 24px; border-radius: 8px; font-weight: 600; text-decoration: none; transition: all 0.2s; }
+  .about-card .cl-primary { background: var(--gold); color: #000; }
+  .about-card .cl-primary:hover { background: #d4a017; }
+  .about-card .cl-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .about-card .cl-secondary:hover { border-color: var(--text-muted); }
+
+  /* ===== FOOTER ===== */
+  footer { padding: 24px 32px; text-align: center; border-top: 1px solid var(--border); }
+  footer p { font-size: 0.7rem; color: var(--text-dim); }
+
+  /* ===== PRINT / PDF ===== */
+  @media print {
+    /* Kill the fixed nav so it doesn't overlay every page */
+    nav { position: static !important; background: var(--bg) !important; backdrop-filter: none !important; }
+    
+    /* Reduce section padding for print density */
+    section { padding-left: 16px !important; padding-right: 16px !important; }
+    .problem-section, .cost-section, .whynot-section, .arch-section,
+    .workflow-section, .sm-section, .principles-section, .diff-section,
+    .about-section { padding-top: 48px !important; padding-bottom: 24px !important; }
+
+    /* Hero gets its own page */
+    .hero {
+      page-break-after: always !important;
+      break-after: page !important;
+      padding-top: 100px !important;
+    }
+
+    /* Cards: NEVER split across pages */
+    .problem-card,
+    .whynot-card,
+    .arch-layer,
+    .principle-card,
+    .diff-card,
+    .wf-step,
+    .cost-bar,
+    .about-card { 
+      page-break-inside: avoid !important; 
+      break-inside: avoid !important; 
+    }
+
+    /* Section headers MUST stay with their content */
+    .s-header,
+    .s-header + * {
+      page-break-before: auto;
+    }
+    .s-header {
+      page-break-after: avoid !important;
+      break-after: avoid !important;
+    }
+    h2, h3, h4 {
+      page-break-after: avoid !important;
+      break-after: avoid !important;
+    }
+
+    /* State machine rows: keep each row + its branches together */
+    .sm-main-row { 
+      page-break-inside: avoid !important; 
+      break-inside: avoid !important;
+    }
+    .sm-branch-row {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
+    .sm-state-grid {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
+
+    /* Force clean page breaks before the big sections */
+    .arch-section {
+      page-break-before: always !important;
+      break-before: page !important;
+    }
+    .sm-section {
+      page-break-before: always !important;
+      break-before: page !important;
+    }
+    .principles-section {
+      page-break-before: always !important;
+      break-before: page !important;
+    }
+    .diff-section {
+      page-break-before: always !important;
+      break-before: page !important;
+    }
+
+    /* Footer: never cut */
+    footer {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    .hero h1 { font-size: 2.2rem; }
+    .problem-grid, .whynot-grid, .diff-grid { grid-template-columns: 1fr; }
+    .principles-grid { grid-template-columns: 1fr; }
+    .cost-bar { flex-direction: column; gap: 24px; }
+    .cost-divider { width: 60px; height: 1px; }
+    nav .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="https://asteroidbelt.co" class="logo" style="text-decoration:none;">Asteroid Belt</a>
+    <div class="nav-links">
+      <a href="#problem">The Problem</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#workflow">Workflow</a>
+      <a href="#principles">Principles</a>
+      <a href="#about">About</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="eyebrow">Architecture Whitepaper</div>
+  <h1>Scaling AI-Native Development Beyond Individual Tooling</h1>
+  <div class="subtitle">Current AI development tools are built for individual developers. Enterprise engineering orgs need shared context, shared quality, and shared memory. Here's an architecture that delivers all three.</div>
+  <div class="hero-meta">
+    <div class="meta-item"><div class="meta-dot" style="background:var(--gold)"></div> Multi-Agent Orchestration</div>
+    <div class="meta-item"><div class="meta-dot" style="background:var(--green)"></div> Event-Driven State Machine</div>
+    <div class="meta-item"><div class="meta-dot" style="background:var(--purple)"></div> Human-in-the-Loop Quality Gates</div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="problem-section" id="problem">
+  <div class="s-header">
+    <div class="s-eyebrow">The Problem</div>
+    <h2>AI tooling wasn't built for teams</h2>
+    <p>The current generation of AI development tools solves individual productivity. It doesn't solve organizational capability.</p>
+  </div>
+
+  <div class="problem-grid">
+    <div class="problem-card">
+      <div class="p-icon">🔒</div>
+      <h3>Context is Local</h3>
+      <p>AI agents rely on local rule files, repository-scoped configs, and individual MCP installations. Without shared context, every developer's AI has a different (and incomplete) picture of the work.</p>
+      <div class="p-examples">
+        <div class="p-example">Cursor rules, Windsurf rules, Claude.md files are all individual-scoped</div>
+        <div class="p-example">Sharing rules via repo forces identical workflows on everyone</div>
+        <div class="p-example">Enterprise policies, testing standards, and approval flows live outside the AI's awareness</div>
+      </div>
+    </div>
+    <div class="problem-card">
+      <div class="p-icon">📉</div>
+      <h3>Quality is Inconsistent</h3>
+      <p>Without shared quality standards enforced at the system level, AI output quality varies wildly between developers, teams, and even sessions. "AI slop" becomes the default.</p>
+      <div class="p-examples">
+        <div class="p-example">No shared definition of "good enough" across the org</div>
+        <div class="p-example">Quality checks happen after the fact, not during generation</div>
+        <div class="p-example">Over-engineering, DRY violations, and style drift accumulate silently</div>
+      </div>
+    </div>
+    <div class="problem-card">
+      <div class="p-icon">🧠</div>
+      <h3>No Institutional Memory</h3>
+      <p>Every AI session starts from zero. Decisions made yesterday are forgotten today. The org's collective intelligence (what worked, what failed, why) never reaches the AI.</p>
+      <div class="p-examples">
+        <div class="p-example">Previous build failures and lessons learned aren't captured</div>
+        <div class="p-example">Testing strategies discovered by one team don't propagate</div>
+        <div class="p-example">Codebase decision history exists in people's heads, not in the system</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COST -->
+<section class="cost-section">
+  <div class="cost-bar">
+    <div class="cost-stat">
+      <div class="num gold">~25%</div>
+      <div class="label">of developer time spent re-explaining context to AI tools, based on our experience working with engineering teams</div>
+    </div>
+    <div class="cost-divider"></div>
+    <div class="cost-stat">
+      <div class="num red">3–5x</div>
+      <div class="label">rework multiplier when AI generates code without shared business context (estimated from internal project data)</div>
+    </div>
+    <div class="cost-divider"></div>
+    <div class="cost-stat">
+      <div class="num blue">0%</div>
+      <div class="label">of AI-assisted learnings that propagate to other developers automatically in current tooling</div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY NOT -->
+<section class="whynot-section" id="patterns">
+  <div class="s-header">
+    <div class="s-eyebrow">Architecture Selection</div>
+    <h2>Why common patterns fall short</h2>
+    <p>The solution requires concurrent agents, enforced ordering, feedback loops, and human gates. Most patterns can't model all four.</p>
+  </div>
+
+  <div class="whynot-grid">
+    <div class="whynot-card wn-no">
+      <span class="verdict-tag verdict-reject">Not a fit</span>
+      <h3>Linear Pipeline</h3>
+      <ul class="wn-list">
+        <li><span class="marker">✗</span> Can't model agents that run continuously alongside the build</li>
+        <li><span class="marker">✗</span> Can't model retry loops within build phases</li>
+        <li><span class="marker">✗</span> Can't model feedback from validation back to build</li>
+        <li><span class="marker">✗</span> No concept of human pause/resume</li>
+        <li><span class="marker">✗</span> No rollback capability</li>
+      </ul>
+    </div>
+    <div class="whynot-card wn-no">
+      <span class="verdict-tag verdict-partial">Half-fit</span>
+      <h3>Autonomous Agent Swarm</h3>
+      <ul class="wn-list">
+        <li><span class="marker" style="color:var(--green)">✓</span> Concurrent agents are natural</li>
+        <li><span class="marker" style="color:var(--green)">✓</span> Flexible inter-agent communication</li>
+        <li><span class="marker">✗</span> Can't enforce "deploy must come after build"</li>
+        <li><span class="marker">✗</span> No quality gates: agents just act</li>
+        <li><span class="marker">✗</span> Debugging and auditability nightmare</li>
+        <li><span class="marker">✗</span> Enterprise trust problem at scale</li>
+      </ul>
+    </div>
+    <div class="whynot-card wn-yes">
+      <span class="verdict-tag verdict-accept">Recommended</span>
+      <h3>Event-Driven Supervisor Tree + State Machine</h3>
+      <ul class="wn-list">
+        <li><span class="marker">✓</span> Concurrent observer agents run naturally alongside build</li>
+        <li><span class="marker">✓</span> State machine enforces sequencing constraints</li>
+        <li><span class="marker">✓</span> Retry and feedback loops are first-class state transitions</li>
+        <li><span class="marker">✓</span> Human gates are state transitions, not ad-hoc</li>
+        <li><span class="marker">✓</span> Supervisor escalation maps to "bubble-up" to humans</li>
+        <li><span class="marker">✓</span> Every state change is logged; fully auditable</li>
+        <li><span class="marker">✓</span> Deterministic where it matters, flexible where it doesn't</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section class="arch-section" id="architecture">
+  <div class="s-header">
+    <div class="s-eyebrow">The Architecture</div>
+    <h2>Four layers, three composed patterns</h2>
+    <p>A supervisor tree manages agent lifecycle. A state machine enforces work transitions. Observer agents provide continuous quality, context, and memory.</p>
+  </div>
+
+  <div class="arch-layers">
+    <div class="arch-layer">
+      <div class="layer-marker lm-orch">👑</div>
+      <div class="layer-content">
+        <h4>Orchestration Layer <span class="layer-tag" style="background:rgba(224,82,82,0.15); color:var(--red);">Always On</span></h4>
+        <p>A supervisor agent (Captain) manages agent lifecycle: spin-up, teardown, reassignment, and escalation. It delegates based on the state machine's answer to "what should happen next?" A separate state agent owns the work lifecycle, tracking which state the idea is in and what transition is valid next. Clean separation: one owns agents, the other owns work.</p>
+        <div class="layer-agents">
+          <span class="agent-chip">Captain (Agent Lifecycle)</span>
+          <span class="agent-chip">Planner / State Agent (Work Lifecycle)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="arch-layer">
+      <div class="layer-marker lm-infra">🧠</div>
+      <div class="layer-content">
+        <h4>Infrastructure Layer <span class="layer-tag" style="background:rgba(96,165,250,0.15); color:var(--blue);">Always On</span></h4>
+        <p>Three infrastructure agents run continuously: a typed message bus for all inter-agent communication (with a defined message envelope schema), a context service that serves as a read-only knowledge graph for all agents, and a historian that observes everything and serves as the sole writer to the context service, maintaining an append-only audit trail and creating snapshots that serve as rollback targets.</p>
+        <div class="layer-agents">
+          <span class="agent-chip">Communicator (Typed Message Bus)</span>
+          <span class="agent-chip">Context Agent (Read-Only Service)</span>
+          <span class="agent-chip">Historian (Observer + Sole Writer)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="arch-layer">
+      <div class="layer-marker lm-qual">⚡</div>
+      <div class="layer-content">
+        <h4>Quality Layer <span class="layer-tag" style="background:rgba(167,139,250,0.15); color:var(--purple);">Observer + Interceptor</span></h4>
+        <p>A live quality monitor observes all code changes in real-time, detecting AI slop, over-engineering, DRY violations, and style drift. Critically, it doesn't modify code directly; it queues suggestions that the builder pulls at safe checkpoint boundaries between steps. This prevents race conditions while keeping quality feedback tight to the moment of generation.</p>
+        <div class="layer-agents">
+          <span class="agent-chip">Supercharge (Checkpoint-Based Interceptor)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="arch-layer">
+      <div class="layer-marker lm-exec">🔨</div>
+      <div class="layer-content">
+        <h4>Execution Layer <span class="layer-tag" style="background:rgba(52,211,153,0.15); color:var(--green);">Task-Scoped</span></h4>
+        <p>Task-scoped agents that spin up per idea: a phased builder that executes the plan step-by-step with quality gates at each phase, a holistic correctness validator that returns confidence scores (not just pass/fail) against acceptance criteria and business context, a deployer that owns both deployment and rollback capability targeting historian snapshots, and a smoke tester that iterates until confidence reaches a configurable threshold.</p>
+        <div class="layer-agents">
+          <span class="agent-chip">Builder (Phased)</span>
+          <span class="agent-chip">Verifier (Quality Gates)</span>
+          <span class="agent-chip">Correctness (Confidence Scoring)</span>
+          <span class="agent-chip">Deployer (+ Rollback)</span>
+          <span class="agent-chip">Smoke Tester (Confidence Loop)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKFLOW -->
+<section class="workflow-section" id="workflow">
+  <div class="s-header">
+    <div class="s-eyebrow">End-to-End Workflow</div>
+    <h2>From idea to production, with humans in control</h2>
+    <p>A complete feature lifecycle with quality gates, feedback loops, confidence scoring, rollback capability, and explicit human decision points.</p>
+  </div>
+
+  <div class="wf-timeline">
+    <div class="wf-step ws-init">
+      <div class="ws-card">
+        <h4>Initialization <span class="ws-state" style="background:rgba(240,180,41,0.15); color:var(--gold);">initialized</span></h4>
+        <p>Captain receives the approved plan. Spins up all agents. Historian hydrates the context graph with story details, acceptance criteria, tech context, and business docs. State machine sets to initialized.</p>
+      </div>
+    </div>
+    <div class="wf-step ws-build">
+      <div class="ws-card">
+        <h4>Build Phases <span class="ws-state" style="background:rgba(52,211,153,0.15); color:var(--green);">building</span></h4>
+        <p>Builder executes the plan phase-by-phase. Each phase has its own definition of done. Quality monitor queues findings in real-time; builder pulls them at checkpoints. Verifier evaluates gates per phase: pass advances, fail retries with learnings from previous attempts. Max retries exceeded transitions to blocked, escalating to human.</p>
+      </div>
+    </div>
+    <div class="wf-step ws-validate">
+      <div class="ws-card">
+        <h4>Correctness Validation <span class="ws-state" style="background:rgba(167,139,250,0.15); color:var(--purple);">validating</span></h4>
+        <p>Holistic evaluation of the entire story, not just individual phases. Returns a confidence score per criterion plus an overall score. High confidence auto-passes. Partial confidence (configurable threshold) surfaces to the human to decide. Low confidence auto-fails back to builder with specific findings.</p>
+      </div>
+    </div>
+    <div class="wf-step ws-deploy">
+      <div class="ws-card">
+        <h4>Deployment <span class="ws-state" style="background:rgba(96,165,250,0.15); color:var(--blue);">deploying</span></h4>
+        <p>Deployer pushes to pre-prod via existing CI/CD pipelines. No custom deployment logic; it leverages existing infrastructure. Deployer also owns rollback capability, targeting historian snapshots if downstream testing fails.</p>
+      </div>
+    </div>
+    <div class="wf-step ws-test">
+      <div class="ws-card">
+        <h4>Smoke Testing <span class="ws-state" style="background:rgba(34,211,238,0.15); color:var(--cyan);">smoke_testing</span></h4>
+        <p>Runs all existing and new tests. Identifies confidence gaps: untested paths, edge cases, integration points. Generates additional tests to close gaps. Iterates until confidence exceeds threshold (default 95%). Critical failures trigger automatic rollback.</p>
+      </div>
+    </div>
+    <div class="wf-step ws-human">
+      <div class="ws-card">
+        <h4>Go-Live Decision <span class="ws-state" style="background:rgba(224,82,82,0.15); color:var(--red);">human gate</span></h4>
+        <p>Human decision point: the final gate before production. Captain presents the full build report: phases completed, correctness confidence scores, smoke test results, and the historian's complete decision trail. Human approves, rejects with feedback, or abandons.</p>
+      </div>
+    </div>
+    <div class="wf-step ws-live">
+      <div class="ws-card">
+        <h4>Production Verified <span class="ws-state" style="background:rgba(52,211,153,0.2); color:var(--green);">prod_verified</span></h4>
+        <p>Feature is live and confirmed working. Post-deploy smoke tests verify production behavior. Deployer remains on rollback standby for a configurable monitoring window. Historian archives the idea's complete lifecycle for future institutional memory.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATE MACHINE -->
+<section class="sm-section" id="states">
+  <div class="s-header">
+    <div class="s-eyebrow">State Machine</div>
+    <h2>14 states, every edge case handled</h2>
+    <p>Including blocked (awaiting human), abandoned (idea killed), and rolling back (reverting deployment). No zombie ideas, no undefined failure modes.</p>
+  </div>
+
+  <div class="sm-flow">
+    <div class="sm-row-wrap">
+      <div class="sm-main-row">
+        <div class="sm-node" style="background:rgba(240,180,41,0.15); color:var(--gold); border:1px solid rgba(240,180,41,0.3);">initialized</div>
+        <div class="sm-connector">→</div>
+        <div class="sm-node" style="background:rgba(52,211,153,0.15); color:var(--green); border:1px solid rgba(52,211,153,0.3);">building</div>
+        <div class="sm-connector">→</div>
+        <div class="sm-node" style="background:rgba(96,165,250,0.15); color:var(--blue); border:1px solid rgba(96,165,250,0.3);">phases_complete</div>
+        <div class="sm-connector">→</div>
+        <div class="sm-node" style="background:rgba(167,139,250,0.15); color:var(--purple); border:1px solid rgba(167,139,250,0.3);">validating</div>
+        <div class="sm-connector">→</div>
+        <div class="sm-node" style="background:rgba(34,211,238,0.15); color:var(--teal); border:1px solid rgba(34,211,238,0.3);">correct</div>
+      </div>
+
+      <div class="sm-branch-row smb-pass">✅ Phase gates pass → advance. Correctness confidence ≥ threshold → correct.</div>
+      <div class="sm-branch-row smb-fail">❌ Phase gate fails → retry (same phase, with learnings). Correctness confidence &lt; 70% → back to building.</div>
+      <div class="sm-branch-row smb-confidence">📊 Correctness confidence 70%–90% → blocked (human decides if acceptable)</div>
+      <div class="sm-branch-row smb-human">👤 Max retries exhausted → blocked {'{'}reason, phase, retry_count, awaiting_since{'}'}</div>
+
+      <div class="sm-main-row" style="margin-top:20px;">
+        <div class="sm-node" style="background:rgba(34,211,238,0.15); color:var(--teal); border:1px solid rgba(34,211,238,0.3);">correct</div>
+        <div class="sm-connector">→</div>
+        <div class="sm-node" style="background:rgba(96,165,250,0.15); color:var(--blue); border:1px solid rgba(96,165,250,0.3);">deploying</div>
+        <div class="sm-connector">→</div>
+        <div class="sm-node" style="background:rgba(34,211,238,0.15); color:var(--cyan); border:1px solid rgba(34,211,238,0.3);">deployed</div>
+        <div class="sm-connector">→</div>
+        <div class="sm-node" style="background:rgba(34,211,238,0.15); color:var(--cyan); border:1px solid rgba(34,211,238,0.3);">smoke_testing</div>
+        <div class="sm-connector">→</div>
+        <div class="sm-node" style="background:rgba(34,211,238,0.15); color:var(--cyan); border:1px solid rgba(34,211,238,0.3);">smoke_passed</div>
+      </div>
+
+      <div class="sm-branch-row smb-pass">✅ CI pipeline succeeds → deployed. Smoke confidence ≥ 95% → smoke_passed.</div>
+      <div class="sm-branch-row smb-rollback">🔄 Pipeline fails or critical smoke failure → rolling_back (Deployer reverts to historian snapshot)</div>
+
+      <div class="sm-main-row" style="margin-top:20px;">
+        <div class="sm-node" style="background:rgba(34,211,238,0.15); color:var(--cyan); border:1px solid rgba(34,211,238,0.3);">smoke_passed</div>
+        <div class="sm-connector">→</div>
+        <div class="sm-node" style="background:rgba(224,82,82,0.15); color:var(--red); border:1px solid rgba(224,82,82,0.3);">⭐ human gate</div>
+        <div class="sm-connector">→</div>
+        <div class="sm-node" style="background:rgba(52,211,153,0.2); color:var(--green); border:1px solid rgba(52,211,153,0.4);">live</div>
+        <div class="sm-connector">→</div>
+        <div class="sm-node" style="background:rgba(52,211,153,0.25); color:#bbf7d0; border:2px solid rgba(52,211,153,0.5);">prod_verified ✓</div>
+      </div>
+
+      <div class="sm-branch-row smb-human">👤 Human rejects → building (with feedback) or abandoned</div>
+      <div class="sm-branch-row smb-rollback">🔄 Post-deploy defect → rolling_back (Deployer on standby during monitoring window)</div>
+    </div>
+
+    <div class="sm-state-grid">
+      <span class="sm-state-chip" style="background:rgba(240,180,41,0.1); color:var(--gold); border-color:rgba(240,180,41,0.25);">initialized</span>
+      <span class="sm-state-chip" style="background:rgba(52,211,153,0.1); color:var(--green); border-color:rgba(52,211,153,0.25);">building</span>
+      <span class="sm-state-chip" style="background:rgba(240,180,41,0.1); color:var(--gold); border-color:rgba(240,180,41,0.25);">retry</span>
+      <span class="sm-state-chip" style="background:rgba(240,180,41,0.1); color:var(--gold); border-color:rgba(240,180,41,0.25);">blocked</span>
+      <span class="sm-state-chip" style="background:rgba(96,165,250,0.1); color:var(--blue); border-color:rgba(96,165,250,0.25);">phases_complete</span>
+      <span class="sm-state-chip" style="background:rgba(167,139,250,0.1); color:var(--purple); border-color:rgba(167,139,250,0.25);">validating</span>
+      <span class="sm-state-chip" style="background:rgba(34,211,238,0.1); color:var(--teal); border-color:rgba(34,211,238,0.25);">correct</span>
+      <span class="sm-state-chip" style="background:rgba(96,165,250,0.1); color:var(--blue); border-color:rgba(96,165,250,0.25);">deploying</span>
+      <span class="sm-state-chip" style="background:rgba(34,211,238,0.1); color:var(--cyan); border-color:rgba(34,211,238,0.25);">deployed</span>
+      <span class="sm-state-chip" style="background:rgba(34,211,238,0.1); color:var(--cyan); border-color:rgba(34,211,238,0.25);">smoke_testing</span>
+      <span class="sm-state-chip" style="background:rgba(34,211,238,0.1); color:var(--cyan); border-color:rgba(34,211,238,0.25);">smoke_passed</span>
+      <span class="sm-state-chip" style="background:rgba(224,82,82,0.1); color:#f87171; border-color:rgba(224,82,82,0.25);">rolling_back</span>
+      <span class="sm-state-chip" style="background:rgba(52,211,153,0.15); color:#bbf7d0; border-color:rgba(52,211,153,0.35);">live</span>
+      <span class="sm-state-chip" style="background:rgba(52,211,153,0.2); color:#bbf7d0; border-color:rgba(52,211,153,0.4);">prod_verified</span>
+      <span class="sm-state-chip" style="background:rgba(100,116,120,0.1); color:var(--text-dim); border-color:rgba(100,116,120,0.25);">abandoned</span>
+    </div>
+  </div>
+</section>
+
+<!-- DESIGN PRINCIPLES -->
+<section class="principles-section" id="principles">
+  <div class="s-header">
+    <div class="s-eyebrow">Design Principles</div>
+    <h2>What makes this enterprise-grade</h2>
+    <p>Every architectural decision optimizes for trust, auditability, and human control at scale.</p>
+  </div>
+
+  <div class="principles-grid">
+    <div class="principle-card">
+      <div class="pr-num">Principle 01</div>
+      <h4>Deterministic Where It Matters</h4>
+      <p>The state machine enforces hard ordering constraints: you can't deploy before building, can't go live before smoke testing. But within those constraints, agents are free to act autonomously. Determinism at the workflow level, flexibility at the agent level.</p>
+    </div>
+    <div class="principle-card">
+      <div class="pr-num">Principle 02</div>
+      <h4>Confidence Scoring, Not Binary Gates</h4>
+      <p>Both correctness validation and smoke testing return confidence scores with per-criterion breakdowns, not just pass/fail. Humans can make informed decisions about partial confidence rather than being forced into all-or-nothing choices. The thresholds are configurable per team.</p>
+    </div>
+    <div class="principle-card">
+      <div class="pr-num">Principle 03</div>
+      <h4>Single Source of Truth</h4>
+      <p>One agent (the Historian) has exclusive write access to the shared context. All other agents read. This prevents conflicting state, maintains an append-only audit trail, and ensures that institutional memory accumulates rather than fragments. Every decision, failure, and learning is captured.</p>
+    </div>
+    <div class="principle-card">
+      <div class="pr-num">Principle 04</div>
+      <h4>Humans Stay In Control</h4>
+      <p>The "bubble-up" algorithm ensures agents escalate to humans when they can't resolve issues. Escalation triggers at the right moment, not after a fixed retry count. Every irreversible action (go-live, abandon) requires explicit human approval. The system augments human judgment; it doesn't replace it.</p>
+    </div>
+    <div class="principle-card">
+      <div class="pr-num">Principle 05</div>
+      <h4>No Zombie Work</h4>
+      <p>Explicit blocked and abandoned states ensure that every idea has a clean lifecycle. Blocked ideas are dashboard-inspectable with metadata about what's blocking and who's needed. Abandoned ideas are archived for institutional memory. Nothing sits in limbo.</p>
+    </div>
+    <div class="principle-card">
+      <div class="pr-num">Principle 06</div>
+      <h4>Quality at Generation Time</h4>
+      <p>A live quality observer monitors code as it's being written, not after the PR is opened. It detects AI slop, over-engineering, and code style drift in real-time, queuing corrections that the builder applies at safe checkpoints. Quality is shifted as far left as possible.</p>
+    </div>
+    <div class="principle-card">
+      <div class="pr-num">Principle 07</div>
+      <h4>Rollback is a First-Class Capability</h4>
+      <p>The deployer owns both deployment and rollback. Historian snapshots serve as rollback targets. Smoke test failures, post-deploy defects, and human overrides can all trigger an automated revert. Recovery is not an afterthought; it's part of the state machine.</p>
+    </div>
+    <div class="principle-card">
+      <div class="pr-num">Principle 08</div>
+      <h4>Observable and Replayable</h4>
+      <p>Every inter-agent message flows through a typed envelope with a defined schema. Every state transition is logged. Every decision has a trail. The entire lifecycle of an idea, from initialization to production, can be replayed, audited, and learned from.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DIFFERENTIATORS -->
+<section class="diff-section">
+  <div class="s-header">
+    <div class="s-eyebrow">Why This Matters at Enterprise Scale</div>
+    <h2>From individual productivity to organizational capability</h2>
+  </div>
+
+  <div class="diff-grid">
+    <div class="diff-card">
+      <div class="d-icon">🏢</div>
+      <h4>Scales With the Org</h4>
+      <p>Shared context, shared quality standards, and shared memory grow with the team. Every developer's AI benefits from every other developer's learnings, automatically.</p>
+    </div>
+    <div class="diff-card">
+      <div class="d-icon">🔍</div>
+      <h4>Auditable by Default</h4>
+      <p>Every decision, every state change, every quality finding is captured with full provenance. Compliance, governance, and post-incident analysis are built in.</p>
+    </div>
+    <div class="diff-card">
+      <div class="d-icon">🛡️</div>
+      <h4>Trust-First Design</h4>
+      <p>Humans approve every irreversible action. Confidence scores replace black-box pass/fail. The system earns trust incrementally; it doesn't demand it upfront.</p>
+    </div>
+    <div class="diff-card">
+      <div class="d-icon">🔄</div>
+      <h4>Resilient to Failure</h4>
+      <p>Retry loops with learnings, automatic rollback, blocked states with escalation. Every failure mode has a defined recovery path; nothing falls through the cracks.</p>
+    </div>
+    <div class="diff-card">
+      <div class="d-icon">⚡</div>
+      <h4>Quality at the Speed of AI</h4>
+      <p>Live quality monitoring catches issues during generation, not in code review. The quality feedback loop is measured in seconds, not days.</p>
+    </div>
+    <div class="diff-card">
+      <div class="d-icon">🧬</div>
+      <h4>Institutional Memory Compounds</h4>
+      <p>Every build attempt, every failure, every testing strategy discovered: captured and indexed. The system accumulates institutional knowledge with every idea it processes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+  <div class="about-card">
+    <h2>Built by Asteroid Belt</h2>
+    <p>We build AI-native development infrastructure: tools and systems that make AI work at the team and organizational level, not just the individual level. This architecture was event-stormed from real experience shipping production software with multi-agent systems and human oversight.</p>
+    <p style="color:var(--text-dim); font-size:0.85rem;">We'd welcome the chance to walk through this architecture, whiteboard the deeper layers, and explore how it applies to your engineering organization.</p>
+    <div class="contact-links">
+      <a href="mailto:adam@asteroidbelt.co" class="contact-link cl-primary">Get in Touch</a>
+      <a href="https://www.linkedin.com/in/adamgcobb" class="contact-link cl-secondary">LinkedIn</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2026 Asteroid Belt &middot; <a href="https://asteroidbelt.co" style="color:var(--text-dim); text-decoration:none;">asteroidbelt.co</a></p>
+</footer>
+
+</body>
+</html>
