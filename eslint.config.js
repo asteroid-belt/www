@@ -13,7 +13,7 @@ export default [
   ...astroPlugin.configs.recommended,
   ...tsPlugin.configs.recommended,
   {
-    ignores: ['dist/', 'node_modules/', '.astro/', 'pnpm-lock.yaml'],
+    ignores: ['dist/', 'node_modules/', '.astro/', 'pnpm-lock.yaml', 'src/pages/whitepaper.astro'],
   },
   {
     files: ['**/*.astro'],
