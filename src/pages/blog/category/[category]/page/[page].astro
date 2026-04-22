@@ -1,0 +1,61 @@
+---
+import Layout from '../../../../../layouts/Layout.astro'
+import BlogCard from '../../../../../components/blog/BlogCard.astro'
+import BlogGrid from '../../../../../components/blog/BlogGrid.astro'
+import CategoryFilter from '../../../../../components/blog/CategoryFilter.astro'
+import Pagination from '../../../../../components/blog/Pagination.astro'
+import { getPublishedPosts, filterByCategory, paginate, CATEGORIES } from '../../../../../lib/blog'
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts()
+  const paths: { params: { category: string; page: string } }[] = []
+
+  for (const category of CATEGORIES) {
+    const filtered = filterByCategory(posts, category)
+    const totalPages = Math.max(1, Math.ceil(filtered.length / 12))
+    for (let i = 2; i <= totalPages; i++) {
+      paths.push({ params: { category, page: String(i) } })
+    }
+  }
+
+  return paths
+}
+
+const { category, page: pageParam } = Astro.params
+const pageNum = parseInt(pageParam!, 10)
+if (isNaN(pageNum) || pageNum < 2) return Astro.redirect('/404')
+
+const posts = await getPublishedPosts()
+const filtered = filterByCategory(posts, category!)
+const page = paginate(filtered, pageNum)
+if (!page) return Astro.redirect('/404')
+---
+
+<Layout
+  title={`Blog — ${category} — Page ${pageNum}`}
+  description={`${category} posts from Asteroid Belt`}
+>
+  <div class="mx-auto max-w-6xl px-4 pt-24 pb-12 text-left">
+    <h1 class="mb-8 text-4xl font-bold text-white">Blog</h1>
+    <CategoryFilter currentCategory={category} />
+    <BlogGrid>
+      {
+        page.posts.map((post) => (
+          <BlogCard
+            title={post.data.title}
+            slug={post.id.replace(/\.md$/, '')}
+            description={post.data.description}
+            publishedAt={post.data.publishedAt}
+            category={post.data.category}
+            heroImage={post.data.heroImage}
+          />
+        ))
+      }
+    </BlogGrid>
+    <Pagination
+      currentPage={pageNum}
+      totalPages={page.totalPages}
+      basePath={`/blog/category/${category}`}
+    />
+  </div>
+</Layout>

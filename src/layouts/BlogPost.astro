@@ -1,0 +1,38 @@
+---
+import Layout from './Layout.astro'
+import PostHeader from '../components/blog/PostHeader.astro'
+import PostFooter from '../components/blog/PostFooter.astro'
+
+interface Props {
+  title: string
+  description: string
+  publishedAt: Date
+  category: string
+  author: string
+  authorAvatar?: string
+  heroImage?: string
+  tags: string[]
+}
+
+const { title, description, publishedAt, category, author, authorAvatar, heroImage, tags } =
+  Astro.props
+---
+
+<Layout title={title} description={description} ogImage={heroImage}>
+  <article class="pt-24 pb-12 text-left">
+    <PostHeader
+      title={title}
+      publishedAt={publishedAt}
+      category={category}
+      author={author}
+      authorAvatar={authorAvatar}
+      heroImage={heroImage}
+    />
+    <div
+      class="mx-auto max-w-3xl px-4 leading-relaxed text-white/80 [&>a]:text-blue-400 [&>a]:underline [&>blockquote]:mb-4 [&>blockquote]:border-l-4 [&>blockquote]:border-white/20 [&>blockquote]:pl-4 [&>blockquote]:text-white/60 [&>blockquote]:italic [&>h2]:mt-8 [&>h2]:mb-4 [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:text-white [&>h3]:mt-6 [&>h3]:mb-3 [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:text-white [&>img]:my-4 [&>img]:rounded-lg [&>ol]:mb-4 [&>ol]:list-decimal [&>ol]:pl-6 [&>p]:mb-4 [&>pre]:mb-4 [&>pre]:overflow-x-auto [&>pre]:rounded-lg [&>pre]:bg-white/5 [&>pre]:p-4 [&>ul]:mb-4 [&>ul]:list-disc [&>ul]:pl-6"
+    >
+      <slot />
+    </div>
+    <PostFooter tags={tags} />
+  </article>
+</Layout>

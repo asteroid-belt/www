@@ -1,0 +1,42 @@
+---
+interface Props {
+  currentPage: number
+  totalPages: number
+  basePath: string
+}
+
+const { currentPage, totalPages, basePath } = Astro.props
+const prevPage =
+  currentPage > 1 ? (currentPage === 2 ? basePath : `${basePath}/page/${currentPage - 1}`) : null
+const nextPage = currentPage < totalPages ? `${basePath}/page/${currentPage + 1}` : null
+---
+
+{
+  totalPages > 1 && (
+    <nav class="mt-12 flex items-center justify-center gap-4">
+      {prevPage ? (
+        <a
+          href={prevPage}
+          class="rounded-lg bg-white/10 px-4 py-2 text-white/70 transition-colors hover:bg-white/20"
+        >
+          &larr; Previous
+        </a>
+      ) : (
+        <span class="rounded-lg bg-white/5 px-4 py-2 text-white/20">&larr; Previous</span>
+      )}
+      <span class="text-sm text-white/50">
+        Page {currentPage} of {totalPages}
+      </span>
+      {nextPage ? (
+        <a
+          href={nextPage}
+          class="rounded-lg bg-white/10 px-4 py-2 text-white/70 transition-colors hover:bg-white/20"
+        >
+          Next &rarr;
+        </a>
+      ) : (
+        <span class="rounded-lg bg-white/5 px-4 py-2 text-white/20">Next &rarr;</span>
+      )}
+    </nav>
+  )
+}

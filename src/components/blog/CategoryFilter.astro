@@ -1,0 +1,36 @@
+---
+import { CATEGORIES } from '../../lib/blog'
+
+interface Props {
+  currentCategory?: string
+}
+
+const { currentCategory } = Astro.props
+---
+
+<nav class="mb-8 flex flex-wrap gap-2">
+  <a
+    href="/blog"
+    class:list={[
+      'rounded-full px-4 py-1.5 text-sm transition-colors',
+      !currentCategory ? 'bg-white text-black' : 'bg-white/10 text-white/70 hover:bg-white/20',
+    ]}
+  >
+    All
+  </a>
+  {
+    CATEGORIES.map((cat) => (
+      <a
+        href={`/blog/category/${cat}`}
+        class:list={[
+          'rounded-full px-4 py-1.5 text-sm capitalize transition-colors',
+          currentCategory === cat
+            ? 'bg-white text-black'
+            : 'bg-white/10 text-white/70 hover:bg-white/20',
+        ]}
+      >
+        {cat}
+      </a>
+    ))
+  }
+</nav>
